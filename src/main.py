@@ -216,14 +216,16 @@ try:
                             campo_infracoes_aVencer = navegador.find_element(By.XPATH, selector_infracoes_aVencer)
                             navegador.execute_script("arguments[0].click();", campo_infracoes_aVencer)
 
-                            modal_descricao_infra_aVencer = WebDriverWait(navegador, 20).until(
-                                EC.visibility_of_element_located((By.CSS_SELECTOR, "app-infracoes-detail > div > div > div:nth-child(3)"))
-                            )
+                            try:
+
+                                modal_descricao_infra_aVencer = WebDriverWait(navegador, 20).until(
+                                    EC.visibility_of_element_located((By.CSS_SELECTOR, "app-infracoes-detail > div > div > div:nth-child(3)"))
+                                )
+
+                            except (TimeoutException, NoSuchElementException):    
+                                navegador.refresh()
 
                             voltarInfra()
-
-                    
-
 
                 except (TimeoutException, NoSuchElementException):
 

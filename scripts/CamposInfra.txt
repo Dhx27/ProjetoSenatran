@@ -1,0 +1,9 @@
+Campos dos detalhes da infrações dos veículos
+
+Campo orgão autuador: div:nth-child(3) > div > table.table.termos > tbody > tr:nth-child(1) > td
+Local da infração: app-infracoes-detail > div > div > div:nth-child(3) > div > table.table.termos > tbody > tr:nth-child(3) > td
+Data/Hora do Cometimento da Infração: app-infrator-list > app-infracoes-detail > div > div > div:nth-child(3) > div > table.table.termos > tbody > tr:nth-child(4) > td
+Número do Auto de Infração: app-infrator-list > app-infracoes-detail > div > div > div:nth-child(3) > div > table.table.termos > tbody > tr:nth-child(5) > td
+Código da Infração: app-infracoes-list > app-infracoes-veiculo-list > app-infrator-list > app-infracoes-detail > div > div > div:nth-child(3) > div > table.table.termos > tbody > tr:nth-child(6) > td
+Valor Original: app-infrator-list > app-infracoes-detail > div > div > div:nth-child(3) > div > table.table.termos > tbody > tr:nth-child(8) > td
+Data Limite para Interposição de Defesa Prévia: app-infracoes-list > app-infracoes-veiculo-list > app-infrator-list > app-infracoes-detail > div > div > div:nth-child(3) > div > table.table.border-dotted > tbody > tr:nth-child(2) > td
