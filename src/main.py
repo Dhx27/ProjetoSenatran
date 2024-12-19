@@ -1,3 +1,4 @@
+import re
 from openpyxl import load_workbook
 import undetected_chromedriver as uc
 import time
@@ -9,8 +10,25 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from dotenv import load_dotenv
 import os
+from selenium.webdriver.common.keys import Keys
 
-entradaExcel = r"C:\Users\diogo.lana\Desktop\Diogo\BASE WAY TO GO SENATRAN.xlsx"
+entradaExcel = r"C:\Users\diogo.lana\Desktop\ProjetoSenatran\data\BASE WAY TO GO SENATRAN.xlsx"
+
+#Função rentorna infrações
+def voltarInfra():
+
+    campo_infracao_do_veiculo = WebDriverWait(navegador,10).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "body > app-root > form > br-main-layout > div > div > main > div.session-info-container > br-breadcrumbs > div > ul > li:nth-child(5) > a"))
+    )
+    navegador.execute_script("arguments[0].click();", campo_infracao_do_veiculo)
+
+    try:
+        modal_infracoes_aVencer = WebDriverWait(navegador, 15).until(
+            EC.visibility_of_element_located((By.CSS_SELECTOR, "body > app-root > form > br-main-layout > div > div > main > app-infracao > app-infracoes-list > app-infracoes-veiculo-list > app-infrator-list > div > div > app-infracao-lista > form > div.lista-infracoes.ng-star-inserted"))
+        )
+    except (NoSuchElementException, TimeoutException):
+        navegador.refresh()
+        time.sleep(10)
 
 #Função volta pesquisa
 def voltarPesquisa():
@@ -159,7 +177,53 @@ try:
                         EC.element_to_be_clickable((By.CSS_SELECTOR, "body > app-root > form > br-main-layout > div > div > main > app-infracao > app-infracoes-list > app-infracoes-veiculo-list > div > div > app-infracao-veiculo-lista > form > div.ng-star-inserted > div.ng-star-inserted > div:nth-child(2) > div"))
                     ).click()     
 
+                    #Verifica erro ao pesquisar as infrações do carro
+                    try:
+                        erro = WebDriverWait(navegador, 10).until(
+                            EC.visibility_of_element_located((By.CSS_SELECTOR, "br-main-layout main > br-alert-messages div.content > div"))
+                        )
+                        mensagem_erro = erro.text
+
+                        if "Ocorreu erro na validação do campo abaixo:" == mensagem_erro:
+                            time.sleep(10)
+                            navegador.refresh()
+
+                    except (TimeoutException, NoSuchElementException):
+                        pass  # Se não houver erro, continua normalmente
+
+                    campoInfracoesPorVeiculo = WebDriverWait(navegador, 15).until(
+                        EC.visibility_of_element_located((By.XPATH, "/html/body/app-root/form/br-main-layout/div/div/main/app-infracao/app-infracoes-list/app-infracoes-veiculo-list/app-infrator-list/div/div/br-title/div/div[1]/h1"))
+                    )
+
+                    #--------------------------------- TRATIVAS MULTAS A VENCER --------------------------------#
                     
+                    elementoInfraVencer = navegador.find_element(By.CSS_SELECTOR, "body > app-root > form > br-main-layout > div > div > main > app-infracao > app-infracoes-list > app-infracoes-veiculo-list > app-infrator-list > div > div > app-infracao-lista > form > div.lista-infracoes.ng-star-inserted > div.ng-star-inserted > h6")
+                    textoInfraAvencer = elementoInfraVencer.text
+                    regex_palavras_indesejadas = r'\((\d+)\)'
+                    resultado_infra_aVencer = re.findall(regex_palavras_indesejadas, textoInfraAvencer)
+                    quant_Infra_aVencer = int (resultado_infra_aVencer[0])
+
+                    if quant_Infra_aVencer > 1:
+                        
+                        for cont in range(1, quant_Infra_aVencer):
+
+                            campo_exibir = navegador.find_element(By.CSS_SELECTOR, "div.ng-star-inserted > div:nth-child(7) > div > br-pagination-table > div > br-select:nth-child(2) div.ng-input > input[type=text]")
+                            campo_exibir.send_keys("50")
+                            time.sleep(1.5)
+                            campo_exibir.send_keys(Keys.ENTER)
+
+                            selector_infracoes_aVencer = f"/html/body/app-root/form/br-main-layout/div/div/main/app-infracao/app-infracoes-list/app-infracoes-veiculo-list/app-infrator-list/div/div/app-infracao-lista/form/div[3]/div[2]/div[{cont}]/div"
+                            campo_infracoes_aVencer = navegador.find_element(By.XPATH, selector_infracoes_aVencer)
+                            navegador.execute_script("arguments[0].click();", campo_infracoes_aVencer)
+
+                            modal_descricao_infra_aVencer = WebDriverWait(navegador, 20).until(
+                                EC.visibility_of_element_located((By.CSS_SELECTOR, "app-infracoes-detail > div > div > div:nth-child(3)"))
+                            )
+
+                            voltarInfra()
+
+                    
+
 
                 except (TimeoutException, NoSuchElementException):
 
@@ -225,7 +289,7 @@ try:
         planilha.save(entradaExcel)
         print("Processamento concluído e planilha salva com sucesso.")
 
-        time.sleep("'")
+        
 
 except TimeoutException:
     print("LOGIN NO SITE NN REALIZADO")
