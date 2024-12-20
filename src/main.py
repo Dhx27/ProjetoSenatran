@@ -222,6 +222,41 @@ try:
                                     EC.visibility_of_element_located((By.CSS_SELECTOR, "app-infracoes-detail > div > div > div:nth-child(3)"))
                                 )
 
+                                campo_orgao_autuador = navegador.find_element(By.CSS_SELECTOR, "div:nth-child(3) > div > table.table.termos > tbody > tr:nth-child(1) > td")
+                                valor_orgao_autuador = campo_orgao_autuador.text
+
+                                campo_local_infracao = navegador.find_element(By.CSS_SELECTOR, "app-infracoes-detail > div > div > div:nth-child(3) > div > table.table.termos > tbody > tr:nth-child(3) > td")
+                                valor_local_infracao = campo_local_infracao.text
+
+                                campo_data_hora_cometimentoInfracao = navegador.find_element(By.CSS_SELECTOR, "app-infrator-list > app-infracoes-detail > div > div > div:nth-child(3) > div > table.table.termos > tbody > tr:nth-child(4) > td")
+                                valor_data_hora_cometimentoInfracao = campo_data_hora_cometimentoInfracao.text
+
+                                campo_AIT = navegador.find_element(By.CSS_SELECTOR, "app-infrator-list > app-infracoes-detail > div > div > div:nth-child(3) > div > table.table.termos > tbody > tr:nth-child(5) > td")
+                                valor_AIT = campo_AIT.text
+
+                                campo_codigo_infracao = navegador.find_element(By.CSS_SELECTOR, "app-infracoes-list > app-infracoes-veiculo-list > app-infrator-list > app-infracoes-detail > div > div > div:nth-child(3) > div > table.table.termos > tbody > tr:nth-child(6) > td")
+                                valor_codigo_infracao = campo_codigo_infracao.text
+
+                                campo_valor_infracao = navegador.find_element(By.CSS_SELECTOR, "app-infrator-list > app-infracoes-detail > div > div > div:nth-child(3) > div > table.table.termos > tbody > tr:nth-child(8) > td")
+                                valor_infracao = campo_valor_infracao.text
+
+                                colunaAuto = set(row.value for row in guia_resultado_autos ['A'] if row.value is not None)
+                                valor_AIT_procurar = valor_AIT
+
+                                existe = valor_AIT_procurar in colunaAuto
+
+                                if not existe:
+                                    
+                                    ultima_linha =  guia_resultado_autos.max_row + 1
+
+                                    guia_resultado_autos[f'A{ultima_linha}'] = valor_AIT
+                                    guia_resultado_autos[f'{ultima_linha}'] = placa_atual
+
+
+                                    
+                                    corte_data_hora_infracao = re.findall(" ", valor_data_hora_cometimentoInfracao)
+
+
                             except (TimeoutException, NoSuchElementException):    
                                 navegador.refresh()
 
